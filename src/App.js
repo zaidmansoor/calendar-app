@@ -79,6 +79,10 @@ class App extends Component {
       year: state.selected.getFullYear()
     });
 
+    arr.sort((a,b) => {
+      return a.day - b.day;
+    })
+
     state.events.set(key, arr);
     self.setState(state);
 
