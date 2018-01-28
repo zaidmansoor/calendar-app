@@ -21,7 +21,8 @@ class App extends Component {
             popupLeft: 0,
             hour: 0,
             minute: 0,
-            event: ''
+            event: '',
+            error: ''
         };
 
     self.handleChange = self.handleChange.bind(self);
@@ -101,26 +102,54 @@ class App extends Component {
     const key = self.state.selected.getFullYear().toString() + "-" + self.state.selected.getMonth().toString();
     let arr = (state.events.has(key))? state.events.get(key): [];
 
-    arr.push({
-      date: new Date(self.state.selected.getFullYear(), self.state.selected.getMonth(), 
-                    self.state.selected.getDate(), self.state.hour, self.state.minute),
-      event: self.state.event
-    });
+    let hour = parseInt(self.state.hour, 10);
+    let minute = parseInt(self.state.minute, 10);
+    let event = self.state.event;
+    let error = '';
+    let errCount = 0;
 
-    arr.sort((a,b) => {
-      return a.date - b.date;
-    })
+    if (!event) {
+      error += "Please specify an event name. "; 
+      errCount++;
+    }
+    if (!Number.isInteger(hour) || hour < 0 || hour > 23) {
+      error += "Hour must a number between 0 - 23. ";
+      errCount++;
+    }
+    if (!Number.isInteger(minute) || minute < 0 || hour > 59) {
+      error += "minute must a number between 0 - 59. ";
+      errCount++;
+    }
 
-    state.events.set(key, arr);
-    state.selected = null;
-    state.showPopup = false;
-    state.popupTop = 0;
-    state.popupLeft = 0;
-    state.hour = 0;
-    state.minute = 0;
-    state.event = '';
-    document.removeEventListener('click', self.dismissPopup, false);
+    if (error) {
+      state.error = error;
+      state.popupTop = state.popupTop - (5 + (10 * errCount));
 
+    } else {
+      arr.push({
+        date: new Date(self.state.selected.getFullYear(), self.state.selected.getMonth(), 
+                      self.state.selected.getDate(), hour, minute),
+        event: self.state.event
+      });
+
+      arr.sort((a,b) => {
+        return a.date - b.date;
+      });
+
+      state.events.set(key, arr);
+      state.selected = null;
+      state.showPopup = false;
+      state.popupTop = 0;
+      state.popupLeft = 0;
+      state.hour = 0;
+      state.minute = 0;
+      state.event = '';
+      state.error = '';
+    }
+
+    console.log('asdad')
+    
+    console.log(state);
     self.setState(state);
   }
 
@@ -230,6 +259,7 @@ class App extends Component {
                 <input type='number' min='1' max='59' step='1' name='minute' placeholder='Minute' id='minute' className='popup' value={self.state.minute} onChange={self.handleChange}/>
                 <input type='text' name='event' id='event' placeholder='Event name' className='popup' value={self.state.event} onChange={self.handleChange}/>
                 <button type="button" name="commit" onClick={self.addEvent}>Save</button>
+                <div className="error">{self.state.error}</div>
             </div>
           </div>
           <ul id='events-list'>
