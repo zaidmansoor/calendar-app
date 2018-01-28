@@ -23,8 +23,9 @@ class App extends Component {
             minute: 0, // variable for minute on popup
             event: '', // event name on popup
             error: '', // error message on popup
-            lowerLimit: new Date(1980, 11, 31),
-            upperLimit: new Date(2024, 11, 31)
+            errorCount: 0,
+            lowerLimit: new Date(2016, 11, 31),
+            upperLimit: new Date(2018, 11, 31)
         };
 
     // Bind events to react class App to get access to state and props variables 
@@ -120,21 +121,22 @@ class App extends Component {
     let errCount = 0;
 
     if (!event) {
-      error += "Please specify an event name. "; 
+      error += "Please specify a valid event name. "; 
       errCount++;
     }
     if (!Number.isInteger(hour) || hour < 0 || hour > 23) {
       error += "Hour must a number between 0 - 23. ";
       errCount++;
     }
-    if (!Number.isInteger(minute) || minute < 0 || hour > 59) {
+    if (!Number.isInteger(minute) || minute < 0 || minute > 59) {
       error += "minute must a number between 0 - 59. ";
       errCount++;
     }
 
     if (error) {
+      state.popupTop = state.popupTop - (5 + (13 * (errCount - state.errorCount)));
       state.error = error;
-      state.popupTop = state.popupTop - (5 + (10 * errCount));
+      state.errorCount = errCount;
 
     } else {
       arr.push({
@@ -156,6 +158,7 @@ class App extends Component {
       state.minute = 0;
       state.event = '';
       state.error = '';
+      state.errorCount = 0;
     }
 
     self.setState(state);
@@ -197,6 +200,7 @@ class App extends Component {
     state.minute = 0;
     state.event = '';
     state.error = '';
+    state.errCount = 0;
 
     self.setState(state);
   }
