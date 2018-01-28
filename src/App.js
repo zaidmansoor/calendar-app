@@ -30,6 +30,8 @@ class App extends Component {
     self.isLeapYear = self.isLeapYear.bind(self);
     self.addEvent = self.addEvent.bind(self);
     self.onCancel = self.onCancel.bind(self);
+    this.dismissPopup = this.dismissPopup.bind(this);
+    document.addEventListener('click', self.dismissPopup, false);
   }
 
   componentDidMount () {
@@ -117,6 +119,7 @@ class App extends Component {
     state.hour = 0;
     state.minute = 0;
     state.event = '';
+    document.removeEventListener('click', self.dismissPopup, false);
 
     self.setState(state);
   }
@@ -128,6 +131,19 @@ class App extends Component {
       [event.target.id]: event.target.value,
     });
 
+  }
+
+  dismissPopup(event) {
+    const self = this;
+    let popupBox = ReactDOM.findDOMNode(self.refs.popupBox);
+
+    // check if the click event happened on the popup and return.
+    if (event.target.parentNode === popupBox || event.target === popupBox) {
+      return;
+    } else if (self.state.showPopup) { 
+      // dimiss popup if the popup is visible and user clicked elsewhere
+      self.onCancel();
+    }
   }
 
   onCancel() {
@@ -213,9 +229,7 @@ class App extends Component {
                 <input type='number' min='1' max='23' step='1' name='hour' placeholder='Hour' id='hour' className='popup' value={self.state.hour} onChange={self.handleChange}/>
                 <input type='number' min='1' max='59' step='1' name='minute' placeholder='Minute' id='minute' className='popup' value={self.state.minute} onChange={self.handleChange}/>
                 <input type='text' name='event' id='event' placeholder='Event name' className='popup' value={self.state.event} onChange={self.handleChange}/>
-                <button type="button" name="commit" onClick={self.onCancel}>Cancel</button>
                 <button type="button" name="commit" onClick={self.addEvent}>Save</button>
-                
             </div>
           </div>
           <ul id='events-list'>
