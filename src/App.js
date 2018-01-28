@@ -24,8 +24,8 @@ class App extends Component {
             event: '', // event name on popup
             error: '', // error message on popup
             errorCount: 0,
-            lowerLimit: new Date(2016, 11, 31),
-            upperLimit: new Date(2018, 11, 31)
+            lowerLimit: new Date(1980, 11, 31),
+            upperLimit: new Date(2024, 11, 31)
         };
 
     // Bind events to react class App to get access to state and props variables 
@@ -43,7 +43,7 @@ class App extends Component {
 
   // Called by React when component is mounted (initialized)
   componentDidMount () {
-    const self = this;
+    constructort self = this;
     const currentDate = new Date();
     let state = self.state;
     let current = currentDate;
