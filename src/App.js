@@ -8,23 +8,26 @@ class App extends Component {
     const self = this;
 
     self.state = {
-            events: new Map(),
-            selected: null,
-            current: null,
+            events: new Map(), // Data structure to hold events data
+            selected: null, // Date of the selected date on  calender
+            current: null, // Date of the current month shown on  calender
             daysInMonth: [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
             daysLabels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
             monthsLabel: ['January', 'February', 'March', 'April',
                         'May', 'June', 'July', 'August', 'September',
                         'October', 'November', 'December'],
-            showPopup: false,
-            popupTop: 0,
-            popupLeft: 0,
-            hour: 0,
-            minute: 0,
-            event: '',
-            error: ''
+            showPopup: false, // Control the show / hide popup
+            popupTop: 0, // Control the popup top position
+            popupLeft: 0, // Control the popup left position
+            hour: 0, // variable for hour on popup
+            minute: 0, // variable for minute on popup
+            event: '', // event name on popup
+            error: '', // error message on popup
+            lowerLimit: new Date(1980, 11, 31),
+            upperLimit: new Date(2024, 11, 31)
         };
 
+    // Bind events to react class App to get access to state and props variables 
     self.handleChange = self.handleChange.bind(self);
     self.goBack = self.goBack.bind(self);
     self.goForward = self.goForward.bind(self);
@@ -32,9 +35,12 @@ class App extends Component {
     self.addEvent = self.addEvent.bind(self);
     self.onCancel = self.onCancel.bind(self);
     this.dismissPopup = this.dismissPopup.bind(this);
+
+    //event to dismiss popup
     document.addEventListener('click', self.dismissPopup, false);
   }
 
+  // Called by React when component is mounted (initialized)
   componentDidMount () {
     const self = this;
     const currentDate = new Date();
@@ -47,6 +53,7 @@ class App extends Component {
 
   }
 
+  // Toggle back one month
   goBack() {
     const self = this;
     let state = self.state;
@@ -58,6 +65,7 @@ class App extends Component {
     self.setState(state);
   }
 
+  // Check leap year in current year.
   isLeapYear(date) {
     const self = this;
     let state = self.state;
@@ -69,6 +77,7 @@ class App extends Component {
     self.setState(state);
   }
 
+  // Toggle forward one month
   goForward() {
     const self = this;
     let state = self.state;
@@ -80,6 +89,7 @@ class App extends Component {
     self.setState(state);
   }
 
+  // Select date, display popup
   selectDate(day, event) {
     const self = this;
     let state = self.state;
@@ -95,6 +105,7 @@ class App extends Component {
     self.setState(state);
   }
 
+  // Event handler for adding event. Requires data validation and having success and error flows.
   addEvent() {
     const self = this;
     let state = self.state;
@@ -147,9 +158,6 @@ class App extends Component {
       state.error = '';
     }
 
-    console.log('asdad')
-    
-    console.log(state);
     self.setState(state);
   }
 
@@ -162,6 +170,7 @@ class App extends Component {
 
   }
 
+  // Check if the popup should be dismissed
   dismissPopup(event) {
     const self = this;
     let popupBox = ReactDOM.findDOMNode(self.refs.popupBox);
@@ -175,6 +184,7 @@ class App extends Component {
     }
   }
 
+  // On cancel reset the popup properties
   onCancel() {
     const self = this;
     let state = self.state;
@@ -186,6 +196,7 @@ class App extends Component {
     state.hour = 0;
     state.minute = 0;
     state.event = '';
+    state.error = '';
 
     self.setState(state);
   }
@@ -194,6 +205,7 @@ class App extends Component {
     return n < 10 ? '0'+n : n
   }
 
+  // Main rendering function on react
   render() {
     const self = this;
     let daysArr = [];
@@ -212,8 +224,12 @@ class App extends Component {
     if (!self.state.current) {
       return(<div></div>);
     } else {
-      let month = self.state.current.getMonth();
-      let year = self.state.current.getFullYear()
+      const month = self.state.current.getMonth();
+      const year = self.state.current.getFullYear();
+      const lastDayOfMonthDateUpper = new Date(year, month, self.state.daysInMonth[month]);
+      const lastDayOfMonthDateLower = new Date(year, month, self.state.daysInMonth[month]);
+      const withinUpperLimit = (self.state.upperLimit.getTime() > lastDayOfMonthDateUpper.setMonth(lastDayOfMonthDateUpper.getMonth() + 1));
+      const withinLowerLimit = (self.state.lowerLimit.getTime() < lastDayOfMonthDateLower.setMonth(lastDayOfMonthDateLower.getMonth() - 1));
 
       const key = year.toString() + "-" + month.toString();
       let eventElems = self.state.events.has(key)? self.state.events.get(key): [];
@@ -240,8 +256,8 @@ class App extends Component {
           <div id='calendar-body'>
             <div className="month">
               <ul>
-                <li className="prev" onClick={self.goBack}>&#10094;</li>
-                <li className="next" onClick={self.goForward}>&#10095;</li>
+                {(withinLowerLimit)? <li className="prev" onClick={self.goBack}>&#10094;</li>:null}
+                {(withinUpperLimit)? <li className="next" onClick={self.goForward}>&#10095;</li>:null}
                 <li>
                   {self.state.monthsLabel[month]}<br/>
                   <span style={{"fontSize":"18px"}}>{year}</span>
@@ -266,7 +282,7 @@ class App extends Component {
             {eventElems.map((data, index) => {
               return <div key={key + "-" + index}>
                       {data.date.getDate() + " " + self.state.monthsLabel[data.date.getMonth()] + " " + data.date.getFullYear() + 
-                      " " + self.pad(data.date.getHours()) + ":" + self.pad(data.date.getMinutes()) + " - " + data.event}
+                      " " + self.pad(data.date.getHours()) + "-" + self.pad(data.date.getMinutes()) + ": " + data.event}
                     </div>
             })}
           </ul>

@@ -3,7 +3,9 @@ The-Calendar-App
 
 Acknowledgement:
 ==================
-Acknowledgements to https://github.com/maxrails/front_end_task for providing the CSS (under src/index.css), the problem set and expected result (under output/)
+Acknowledgements to https://github.com/maxrails/front_end_task for providing the CSS (under src/index.css), the problem set and expected result (under output/).
+
+Used https://github.com/facebook/create-react-app to create a standalone react app.
 
 
 Requirements:
@@ -20,4 +22,6 @@ npm install
 
 Run app:
 npm start
+
+Open browser: http://localhost:3000/
 
