@@ -1,4 +1,4 @@
-The-Calendar-App
+Calendar-App
 ==================
 This is a frontend calender app created using React and ES6.
 
