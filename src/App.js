@@ -21,7 +21,7 @@ class App extends Component {
             popupLeft: 0,
             hour: 0,
             minute: 0,
-            eventName: ''
+            event: ''
         };
 
     self.handleChange = self.handleChange.bind(self);
@@ -119,7 +119,6 @@ class App extends Component {
     state.event = '';
 
     self.setState(state);
-
   }
 
   handleChange(event) {
@@ -135,11 +134,19 @@ class App extends Component {
     const self = this;
     let state = self.state;
 
+    state.selected = null;
     state.showPopup = false;
     state.popupTop = 0;
     state.popupLeft = 0;
+    state.hour = 0;
+    state.minute = 0;
+    state.event = '';
 
     self.setState(state);
+  }
+
+  pad(n) {
+    return n < 10 ? '0'+n : n
   }
 
   render() {
@@ -205,16 +212,17 @@ class App extends Component {
             <div className="popuptext popup" id="myPopup" ref="popupBox" style={styles.popupStyle}>
                 <input type='number' min='1' max='23' step='1' name='hour' placeholder='Hour' id='hour' className='popup' value={self.state.hour} onChange={self.handleChange}/>
                 <input type='number' min='1' max='59' step='1' name='minute' placeholder='Minute' id='minute' className='popup' value={self.state.minute} onChange={self.handleChange}/>
-                <input type='text' name='evenName' id='event' placeholder='Event name' className='popup' onChange={self.handleChange}/>
-                <button type="button" name="commit" onClick={self.addEvent}>Save</button>
+                <input type='text' name='event' id='event' placeholder='Event name' className='popup' value={self.state.event} onChange={self.handleChange}/>
                 <button type="button" name="commit" onClick={self.onCancel}>Cancel</button>
+                <button type="button" name="commit" onClick={self.addEvent}>Save</button>
+                
             </div>
           </div>
           <ul id='events-list'>
             {eventElems.map((data, index) => {
               return <div key={key + "-" + index}>
                       {data.date.getDate() + " " + self.state.monthsLabel[data.date.getMonth()] + " " + data.date.getFullYear() + 
-                      " " + data.date.getHours() + ":" + data.date.getMinutes() + " - " + data.event}
+                      " " + self.pad(data.date.getHours()) + ":" + self.pad(data.date.getMinutes()) + " - " + data.event}
                     </div>
             })}
           </ul>
