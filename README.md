@@ -1,5 +1,6 @@
 The-Calendar-App
 ==================
+This is a frontend calender app created using React and ES6.
 
 Acknowledgement:
 ==================
