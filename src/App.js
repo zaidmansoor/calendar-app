@@ -43,7 +43,7 @@ class App extends Component {
 
   // Called by React when component is mounted (initialized)
   componentDidMount () {
-    constructort self = this;
+    const self = this;
     const currentDate = new Date();
     let state = self.state;
     let current = currentDate;
