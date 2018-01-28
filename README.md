@@ -1,7 +1,7 @@
-the-calendar-app
+The-Calendar-App
 ==================
 
-Acknowledgements:
+Acknowledgement:
 ==================
 Acknowledgements to https://github.com/maxrails/front_end_task for providing the CSS (under src/index.css), the problem set and expected result (under output/)
 
